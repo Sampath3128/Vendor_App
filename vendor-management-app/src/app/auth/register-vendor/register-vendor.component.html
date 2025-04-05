@@ -2,7 +2,7 @@
     <h2>Register Vendor</h2>
     <form (submit)="onRegister()">
 
-      <label for="vendorName">ORG CODE 1</label>
+      <label for="vendorName">ORG CODE</label>
       <select id="orgCode" [(ngModel)]="vendorData.orgCode" name="orgCode" required>
         <option *ngFor="let org of organizations" [value]="org.code">{{ org.name }}</option>
       </select>

@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-vendor-dashboard',
@@ -14,10 +16,32 @@ export class VendorDashboardComponent {
     status: 'Pending',
     verifier: 'OrgAdmin'
   };
-
+  
+  vendorID: number = 0;
   vendorData: any = {};
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient, private authService : AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.loadUserRole();
+    this.authService.vendorId$.subscribe(vendorId => {
+      this.vendorID = Number(vendorId);
+    });
+    this.getVendorInfo(this.vendorID);
+  }
+
+  getVendorInfo(id: number): void {
+    const apiUrl = `http://127.0.0.1:8000/vendor_info/${id}/`;
+    this.http.get(apiUrl).subscribe({
+      next: (response) => {
+        this.vendorData = response;
+        console.log('Vendor Info:', response);
+      },
+      error: (error) => {
+        console.error('Error fetching vendor info:', error);
+      }
+    });
+  }
 
   editBasicDetails() {
     this.router.navigate(['/vendor-edit-basic-details']);

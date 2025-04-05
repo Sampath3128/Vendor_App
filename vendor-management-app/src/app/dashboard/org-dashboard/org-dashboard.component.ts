@@ -19,7 +19,7 @@ export class OrgDashboardComponent {
   constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get<any>('http://127.0.0.1:8000/all/')
+    this.http.get<any>('http://127.0.0.1:8000/all_vendors/')
       .subscribe({
         next: (data) => {
           this.vendorData = data;

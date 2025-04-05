@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -14,7 +15,7 @@ export class RegisterVendorComponent {
     mobileNumber: '',
     username: '',
     password: '',
-    orgCode: ''
+    org_id: ''
   };
 
   organizations = [
@@ -22,11 +23,44 @@ export class RegisterVendorComponent {
     { code: 'ORG002', name: 'Organization B' }
   ];
 
-  constructor(private router: Router) {}
+  orgData = [];
+
+  constructor(private router: Router, private http : HttpClient) {}
+
+  ngOnInit(): void {
+    this.http.get<any>('http://127.0.0.1:8000/all_orgs/')
+      .subscribe({
+        next: (data) => {
+          this.orgData = data;
+          console.log("Organization List: ");
+          console.log(this.orgData);
+        },
+        error: (error) => {
+          console.error('Error fetching vendor data:', error);
+        }
+      });
+  }
 
   onRegister() {
-    console.log('Vendor Registered:', this.vendorData);
-    alert('Vendor registered successfully!');
-    this.router.navigate(['/login']);
-  }
+    fetch('http://localhost:8000/register-vendor/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.vendorData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status == 200) {
+        alert('Vendor registered successfully!');
+        this.router.navigate(['/login']);
+      } else {
+        alert('Registration failed: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Registration failed.');
+    });
+  }  
 }

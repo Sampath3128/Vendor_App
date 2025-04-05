@@ -7,23 +7,23 @@
         <table>
             <tr>
             <th>Vendor Name:</th>
-            <td>{{ vendor.name }}</td>
+            <td>{{ vendorData.VENDORNAME }}</td>
             </tr>
             <tr>
             <th>Email:</th>
-            <td>{{ vendor.email }}</td>
+            <td>{{ vendorData['EMAIL'] }}</td>
             </tr>
             <tr>
             <th>Mobile Number:</th>
-            <td>{{ vendor.mobile }}</td>
+            <td>{{ vendorData['MOBILENUMBER'] }}</td>
             </tr>
+            <tr>
+                <th>Address:</th>
+                <td>{{ vendorData['VENDORADDRESS'] }}</td>
+                </tr>
             <tr>
             <th>Status:</th>
-            <td [ngClass]="getStatusClass(vendor.status)">{{ vendor.status }}</td>
-            </tr>
-            <tr>
-            <th>Verifier:</th>
-            <td>{{ vendor.verifier }}</td>
+            <td [ngClass]="getStatusClass(vendorData['STATUS'])">{{ vendorData['STATUS'] }}</td>
             </tr>
         </table>
         </div>

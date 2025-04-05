@@ -1,25 +1,39 @@
 <div class="login-container">
-    <h2>Login</h2>
-    <form (submit)="onLogin()">
+  <h2 class="form-title">Login</h2>
+  <form (submit)="onLogin()" class="login-form">
+    
+    <div class="form-group">
       <label for="orgCode">Organization</label>
       <select id="orgCode" [(ngModel)]="loginData.orgCode" name="orgCode" required>
-        <option *ngFor="let org of organizations" [value]="org.code">{{ org.name }}</option>
+        <option *ngFor="let org of orgData" [value]="org['organization_id']">{{ org['organization_name'] }}</option>
       </select>
-  
+    </div>
+
+    <div class="form-group">
       <label for="role">Role</label>
       <select id="role" [(ngModel)]="loginData.role" name="role" required>
         <option *ngFor="let org of roles" [value]="org.code">{{ org.name }}</option>
       </select>
-      
+    </div>
+
+    <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" [(ngModel)]="loginData.username" name="username" required />
-  
+    </div>
+
+    <div class="form-group">
       <label for="password">Password</label>
       <input type="password" id="password" [(ngModel)]="loginData.password" name="password" required />
-  
-      <button type="submit">Login</button>
-    </form>
-  
-    <p>New here? <a routerLink="/register-org">Register Organization</a> | <a routerLink="/register-vendor">Register as Vendor</a></p>
-  </div>
-  
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+  </form>
+
+  <p class="form-footer">
+    New here? 
+    <a routerLink="/register-org">Register Organization</a> | 
+    <a routerLink="/register-vendor">Register as Vendor</a>
+  </p>
+</div>

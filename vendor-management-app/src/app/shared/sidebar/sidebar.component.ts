@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarComponent implements OnInit {
   userRole: string | null = null;
   dashboardLink: string = '/dashboard'; // Default route
   private roleSubscription!: Subscription;
@@ -23,15 +23,4 @@ export class SidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  logout() {
-    this.authService.loadUserRole();
-    this.router.navigate(['/login']);
-  }
-
-  ngOnDestroy(): void {
-    // Unsubscribe to prevent memory leaks
-    if (this.roleSubscription) {
-      this.roleSubscription.unsubscribe();
-    }
-  }
 }

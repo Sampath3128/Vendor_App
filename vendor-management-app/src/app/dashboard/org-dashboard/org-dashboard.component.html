@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <h2>Organization Dashboard</h2>
+  
+      <div class="vendor-list">
+        <h3>Registered Vendors</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Vendor Name</th>
+              <th>Status</th>
+              <th>Verifier</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let vendor of vendors">
+              <td>{{ vendor.name }}</td>
+              <td [ngClass]="getStatusClass(vendor.status)">{{ vendor.status }}</td>
+              <td>{{ vendor.verifier }}</td>
+              <td>
+                <button (click)="viewVendor(vendor.id)">View</button>
+                <button *ngIf="vendor.status === 'Pending'" (click)="verifyVendor(vendor.id)">Verify</button>
+                <button *ngIf="vendor.status === 'Pending'" (click)="rejectVendor(vendor.id)">Reject</button>
+                <button (click)="updateVerifier(vendor.id)">Update Verifier</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

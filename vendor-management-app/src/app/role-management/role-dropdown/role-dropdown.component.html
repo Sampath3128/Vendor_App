@@ -1,0 +1,7 @@
+<div class="role-dropdown">
+    <label for="roleSelect">Select Role:</label>
+    <select id="roleSelect" [(ngModel)]="selectedRole" (change)="onRoleChange()">
+      <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+    </select>
+  </div>
+  

@@ -1,0 +1,25 @@
+<div class="vendor-list">
+    <h2>Vendor List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let vendor of vendors">
+          <td>{{ vendor.id }}</td>
+          <td>{{ vendor.name }}</td>
+          <td>{{ vendor.status }}</td>
+          <td>
+            <button (click)="viewDetails(vendor.id)">View</button>
+            <button (click)="editVendor(vendor.id)">Edit</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+  

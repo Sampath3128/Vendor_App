@@ -1,0 +1,23 @@
+<div class="validate-bank-container">
+    <h2>Validate Bank Details</h2>
+  
+    <form (ngSubmit)="validateBank()">
+      <label for="accountNumber">Account Number:</label>
+      <input type="text" id="accountNumber" [(ngModel)]="bankDetails.accountNumber" name="accountNumber" required>
+  
+      <label for="routingNumber">Routing Number:</label>
+      <input type="text" id="routingNumber" [(ngModel)]="bankDetails.routingNumber" name="routingNumber" required>
+  
+      <label for="accountHolderName">Account Holder Name:</label>
+      <input type="text" id="accountHolderName" [(ngModel)]="bankDetails.accountHolderName" name="accountHolderName" required>
+  
+      <button type="submit">Validate Bank</button>
+    </form>
+  
+    <div *ngIf="validationResult" class="validation-result">
+      <p [ngClass]="{'valid': validationResult.status === 'Valid', 'invalid': validationResult.status === 'Invalid'}">
+        {{ validationResult.message }}
+      </p>
+    </div>
+  </div>
+  

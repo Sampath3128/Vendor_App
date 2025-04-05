@@ -1,0 +1,36 @@
+<div class="register-container">
+    <h2>Register Organization</h2>
+    <form (submit)="onRegister()">
+      <label for="orgName">Organization Name</label>
+      <input type="text" id="orgName" [(ngModel)]="orgData.organizationName" name="orgName" required />
+  
+      <label for="orgCode">Organization Code</label>
+      <input type="text" id="orgCode" [(ngModel)]="orgData.organizationCode" name="orgCode" required />
+  
+      <label for="registrationNumber">Registration Number</label>
+      <input type="text" id="registrationNumber" [(ngModel)]="orgData.registrationNumber" name="registrationNumber" required />
+  
+      <label for="address">Address</label>
+      <textarea id="address" [(ngModel)]="orgData.address" name="address" required></textarea>
+  
+      <h3>Admin Details</h3>
+      <label for="adminName">Admin Name</label>
+      <input type="text" id="adminName" [(ngModel)]="orgData.adminName" name="adminName" required />
+  
+      <label for="adminEmail">Admin Email</label>
+      <input type="email" id="adminEmail" [(ngModel)]="orgData.adminEmail" name="adminEmail" required />
+  
+      <label for="adminMobileNumber">Admin Mobile Number</label>
+      <input type="text" id="adminMobileNumber" [(ngModel)]="orgData.adminMobileNumber" name="adminMobileNumber" required />
+  
+      <label for="adminUsername">Admin Username</label>
+      <input type="text" id="adminUsername" [(ngModel)]="orgData.adminUsername" name="adminUsername" required />
+  
+      <label for="adminPassword">Admin Password</label>
+      <input type="password" id="adminPassword" [(ngModel)]="orgData.adminPassword" name="adminPassword" required />
+  
+      <button type="submit">Register</button>
+      <p>Already Registered? <a routerLink="/login">Proceed to login</a></p>
+    </form>
+  </div>
+  

@@ -1,0 +1,23 @@
+.vendor-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .vendor-edit input, .vendor-edit select {
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .vendor-edit button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .vendor-edit button:hover {
+    background-color: #218838;
+  }
+  

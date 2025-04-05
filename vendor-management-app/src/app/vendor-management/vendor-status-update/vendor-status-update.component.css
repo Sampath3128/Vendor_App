@@ -1,0 +1,11 @@
+.vendor-status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .vendor-status select, .vendor-status button {
+    padding: 8px;
+    font-size: 16px;
+  }
+  

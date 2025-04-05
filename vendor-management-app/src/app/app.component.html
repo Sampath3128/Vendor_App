@@ -1,0 +1,9 @@
+<div class="app-container">
+  <div class="sidebar" *ngIf="shouldShowSidebar()">
+    <app-admin-sidebar *ngIf="userRole === 'admin'"></app-admin-sidebar>
+    <app-vendor-sidebar *ngIf="userRole === 'vendor'"></app-vendor-sidebar>
+  </div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

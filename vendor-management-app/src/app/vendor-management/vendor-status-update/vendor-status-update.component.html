@@ -1,0 +1,19 @@
+<div class="vendor-status">
+    <h2>Update Vendor Status</h2>
+    <label for="vendor">Vendor:</label>
+    <select id="vendor" [(ngModel)]="selectedVendor">
+      <option *ngFor="let vendor of vendors" [value]="vendor.id">
+        {{ vendor.name }}
+      </option>
+    </select>
+  
+    <label for="status">Status:</label>
+    <select id="status" [(ngModel)]="status">
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+      <option value="Pending">Pending</option>
+    </select>
+  
+    <button (click)="updateStatus()">Update</button>
+  </div>
+  

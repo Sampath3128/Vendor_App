@@ -1,0 +1,19 @@
+<div class="verify-otp-container">
+    <h2>Verify OTP</h2>
+  
+    <form (ngSubmit)="verifyOtp()">
+      <label for="otp">Enter OTP:</label>
+      <input type="text" id="otp" [(ngModel)]="otp" name="otp" required maxlength="6">
+  
+      <button type="submit">Verify</button>
+    </form>
+  
+    <div *ngIf="verificationMessage" class="verification-message">
+      <p [ngClass]="{'success': isVerified, 'error': !isVerified}">
+        {{ verificationMessage }}
+      </p>
+    </div>
+  
+    <button *ngIf="!isVerified" (click)="resendOtp()">Resend OTP</button>
+  </div>
+  

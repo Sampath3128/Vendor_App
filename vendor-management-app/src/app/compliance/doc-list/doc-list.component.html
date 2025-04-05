@@ -1,0 +1,28 @@
+<div class="doc-list-container">
+    <h2>Uploaded Compliance Documents</h2>
+  
+    <table>
+      <thead>
+        <tr>
+          <th>Document Name</th>
+          <th>Status</th>
+          <th>Uploaded Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of complianceDocs">
+          <td>{{ doc.name }}</td>
+          <td [ngClass]="{'pending': doc.status === 'Pending', 'verified': doc.status === 'Verified', 'rejected': doc.status === 'Rejected'}">
+            {{ doc.status }}
+          </td>
+          <td>{{ doc.uploadedDate }}</td>
+          <td>
+            <button *ngIf="doc.status === 'Pending'" (click)="verifyDoc(doc)">Verify</button>
+            <button *ngIf="doc.status === 'Pending'" (click)="rejectDoc(doc)">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

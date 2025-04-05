@@ -1,0 +1,22 @@
+<div class="upload-docs-container">
+    <h2>Upload Compliance Documents</h2>
+    
+    <form (submit)="onSubmit()" enctype="multipart/form-data">
+      <label for="w9Form">W9 Form</label>
+      <input type="file" id="w9Form" (change)="onFileSelect($event, 'w9Form')" />
+  
+      <label for="businessLicense">Business License</label>
+      <input type="file" id="businessLicense" (change)="onFileSelect($event, 'businessLicense')" />
+  
+      <label for="vendorAgreement">Vendor Agreement</label>
+      <input type="file" id="vendorAgreement" (change)="onFileSelect($event, 'vendorAgreement')" />
+  
+      <div class="terms">
+        <input type="checkbox" id="agreedToTerms" [(ngModel)]="complianceDocs['agreedToTerms']" name="agreedToTerms" required />
+        <label for="agreedToTerms">I agree to the terms and conditions</label>
+      </div>
+  
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  

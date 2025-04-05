@@ -1,0 +1,33 @@
+<div class="vendor-register-container">
+    <h2>Register Vendor</h2>
+    <form (submit)="onRegister()">
+
+      <label for="vendorName">ORG CODE</label>
+      <select id="orgCode" [(ngModel)]="vendorData.orgCode" name="orgCode" required>
+        <option *ngFor="let org of organizations" [value]="org.code">{{ org.name }}</option>
+      </select>
+      <br>
+      <br>
+
+      <label for="vendorName">Vendor Name</label>
+      <input type="text" id="vendorName" [(ngModel)]="vendorData.vendorName" name="vendorName" required />
+  
+      <label for="vendorAddress">Vendor Address</label>
+      <textarea id="vendorAddress" [(ngModel)]="vendorData.vendorAddress" name="vendorAddress" required></textarea>
+  
+      <label for="email">Email</label>
+      <input type="email" id="email" [(ngModel)]="vendorData.email" name="email" required />
+  
+      <label for="mobileNumber">Mobile Number</label>
+      <input type="text" id="mobileNumber" [(ngModel)]="vendorData.mobileNumber" name="mobileNumber" required />
+  
+      <label for="username">Username</label>
+      <input type="text" id="username" [(ngModel)]="vendorData.username" name="username" required />
+  
+      <label for="password">Password</label>
+      <input type="password" id="password" [(ngModel)]="vendorData.password" name="password" required />
+  
+      <button type="submit">Register</button>
+    </form>
+    <p>Already Registered? <a routerLink="/login">Proceed to login</a></p>
+</div>

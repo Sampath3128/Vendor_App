@@ -1,0 +1,49 @@
+.doc-list-container {
+    width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .pending {
+    color: orange;
+  }
+  
+  .verified {
+    color: green;
+  }
+  
+  .rejected {
+    color: red;
+  }
+  
+  button {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:first-child {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  button:last-child {
+    background-color: #dc3545;
+    color: white;
+  }
+  

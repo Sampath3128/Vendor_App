@@ -1,0 +1,74 @@
+.dashboard-container {
+    padding: 20px;
+    display: flex;
+  }
+  
+  app-sidebar {
+    width: 250px; /* Set a fixed width for the sidebar */
+    flex-shrink: 0; /* Prevent it from shrinking */
+  }
+  
+  .dashboard-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-x: auto; /* Prevent content overflow */
+  }
+  
+  .vendor-list {
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+  }
+  
+  .status-pending {
+    color: orange;
+  }
+  
+  .status-verified {
+    color: green;
+  }
+  
+  .status-rejected {
+    color: red;
+  }
+  
+  button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:first-child {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  button:nth-child(2) {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  button:nth-child(3) {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  button:last-child {
+    background-color: #ffc107;
+    color: black;
+  }
+  

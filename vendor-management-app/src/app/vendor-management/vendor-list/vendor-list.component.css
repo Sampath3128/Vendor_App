@@ -1,0 +1,19 @@
+.vendor-list table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .vendor-list th, .vendor-list td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .vendor-list th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .vendor-list button {
+    margin-right: 5px;
+  }
+  

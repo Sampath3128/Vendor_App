@@ -1,0 +1,41 @@
+.app-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background-color: #3578ff;
+    color: white;
+    padding: 20px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  
+  /* Optional extras for better UX */
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 5px;
+  }
+  
+  .sidebar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  

@@ -52,8 +52,10 @@ export class LoginComponent {
         this.authService.setVendorID(response.vendor_id);
         if (this.loginData.role === 'vendor') {
           this.router.navigate(['/vendor-dashboard/']);
+          this.authService.setUserRole('vendor');
         } else {
           this.router.navigate(['/org-dashboard']);
+          this.authService.setUserRole('admin');
         }
       },
       error: (error) => {

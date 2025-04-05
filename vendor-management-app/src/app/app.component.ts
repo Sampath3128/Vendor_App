@@ -22,6 +22,6 @@ export class AppComponent implements OnInit {
   }
 
   shouldShowSidebar(): boolean {
-    return !!this.userRole && !this.hideSidebarRoutes.includes(this.router.url);
+    return !this.hideSidebarRoutes.includes(this.router.url);
   }
 }

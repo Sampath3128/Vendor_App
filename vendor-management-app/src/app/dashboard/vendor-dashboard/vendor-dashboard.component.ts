@@ -16,14 +16,14 @@ export class VendorDashboardComponent {
     status: 'Pending',
     verifier: 'OrgAdmin'
   };
-  
+
   vendorID: number = 0;
   vendorData: any = {};
 
   constructor(private router: Router, private http: HttpClient, private authService : AuthService) {}
 
   ngOnInit(): void {
-    this.authService.loadUserRole();
+    this.authService.loadVendorID();
     this.authService.vendorId$.subscribe(vendorId => {
       this.vendorID = Number(vendorId);
     });

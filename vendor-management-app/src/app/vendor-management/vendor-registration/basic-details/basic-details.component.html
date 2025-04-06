@@ -1,55 +1,50 @@
 <div class="basic-details-container">
+  <div class="form-header">
+    <h2>Vendor Basic Details</h2>
+    <button *ngIf="!isEditMode" class="edit-button" (click)="enableEditMode()">Edit</button>
+  </div>
 
-  <button *ngIf="!isEditMode" class="edit-button" (click)="enableEditMode()">Edit</button>
-
-  <h2>Vendor Basic Details</h2>
   <form [formGroup]="basicDetailsForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
       <div class="form-group">
         <label>Vendor Name:</label>
-        <input formControlName="vendorName" type="text" required />
+        <input formControlName="vendorName" type="text" placeholder="Enter vendor name" />
       </div>
 
       <div class="form-group">
         <label>Vendor Address:</label>
-        <input formControlName="vendorAddress" type="text" required />
+        <input formControlName="vendorAddress" type="text" placeholder="Enter address" />
       </div>
 
       <div class="form-group">
         <label>Email:</label>
-        <input formControlName="email" type="email" required />
+        <input formControlName="email" type="email" placeholder="Enter email address" />
       </div>
 
       <div class="form-group">
         <label>Mobile Number:</label>
-        <input formControlName="mobileNumber" type="text" required />
+        <input formControlName="mobileNumber" type="text" placeholder="Enter mobile number" />
       </div>
 
       <div class="form-group">
         <label>Username:</label>
-        <input formControlName="userName" type="text" required />
-      </div>
-
-      <div class="form-group">
-        <label>Password:</label>
-        <input formControlName="password" type="password" required />
+        <input formControlName="userName" type="text" placeholder="Enter username" />
       </div>
 
       <div class="form-group full-width">
         <label>Status:</label>
         <select formControlName="status" [disabled]="!isEditMode">
-          <option value="Pending" disabled>Pending</option>
-          <option value="Verified" disabled>Verified</option>
-          <option value="Rejected" disabled>Rejected</option>
-          <option value="Active" disabled>Active</option>
+          <option value="Pending">Pending</option>
+          <option value="Verified">Verified</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Active">Active</option>
         </select>
       </div>
     </div>
 
-    <!-- Button Row - Display only in edit mode -->
     <div class="button-row" *ngIf="isEditMode">
       <button type="submit" [disabled]="basicDetailsForm.invalid">Save</button>
-      <button type="button" (click)="cancelEdit()">Cancel</button>
+      <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
     </div>
   </form>
 </div>

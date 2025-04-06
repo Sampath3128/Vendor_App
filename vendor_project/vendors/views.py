@@ -167,6 +167,7 @@ def get_vendor_info(request, vendor_id):
             # Convert result to a dictionary if needed
             columns = [col[0] for col in cursor.description]
             vendor_info = dict(zip(columns, result))
+            vendor_info.pop('PASSWORDHASH')
 
             cursor.close()
             conn.close()
@@ -198,13 +199,11 @@ def update_vendor(request, vendor_id):
                     EMAIL = %s,
                     MOBILENUMBER = %s,
                     USERNAME = %s,
-                    PASSWORDHASH = %s,
                     UPDATEDAT = %s
                 WHERE VENDORID = %s
             """
 
             now = datetime.utcnow()
-            hashed_password = hash_password(data.get('password'))
 
             values = (
                 data.get('vendorName'),
@@ -212,7 +211,6 @@ def update_vendor(request, vendor_id):
                 data.get('email'),
                 data.get('mobileNumber'),
                 data.get('username'),
-                hashed_password,
                 now,
                 int(vendor_id)
             )
@@ -229,3 +227,88 @@ def update_vendor(request, vendor_id):
 
     return JsonResponse({'error': 'Invalid request method', 'status': 201}, status=405)
 
+@csrf_exempt
+def get_bank_details(request, vendor_id):
+    if request.method == 'GET':
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+        try:
+            query = f"""
+                SELECT BankName, AccountNumber, AccountHolderName, IFSCCode, Branch
+                FROM Banks
+                WHERE VendorID = %s
+                ORDER BY UpdatedAt DESC
+                LIMIT 1
+            """
+            cursor.execute(query, (vendor_id,))
+            row = cursor.fetchone()
+            if row:
+                response = {
+                    'status': 200,
+                    'bankName': row[0],
+                    'accountNumber': row[1],
+                    'accountHolderName': row[2],
+                    'ifsccode': row[3],
+                    'branchName': row[4],
+                }
+            else:
+                response = {'status': 201, 'message': 'No data found'}
+            return JsonResponse(response, safe=False)
+        finally:
+            cursor.close()
+            conn.close()
+
+@csrf_exempt
+def update_bank_details(request, vendor_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        bank_name = data.get('bankName')
+        account_number = data.get('accountNumber')
+        account_holder_Name = data.get('accountHolderName')
+        ifsc_code = data.get('ifsccode')
+        branch = data.get('branchName')
+
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+        try:
+            # Check if vendor exists and get organization_id
+            cursor.execute("SELECT OrganizationID FROM Vendors WHERE VendorID = %s", (vendor_id,))
+            vendor_row = cursor.fetchone()
+            if not vendor_row:
+                return JsonResponse({'status': 404, 'message': 'Vendor not found'})
+
+            organization_id = vendor_row[0]
+
+            # Check if bank record exists for the vendor
+            cursor.execute("SELECT COUNT(*) FROM Banks WHERE VendorID = %s", (vendor_id,))
+            exists = cursor.fetchone()[0] > 0
+
+            if exists:
+                # Update existing bank record
+                update_query = """
+                    UPDATE Banks
+                    SET BankName = %s,
+                        AccountNumber = %s,
+                        AccountHolderName = %s,
+                        IFSCCode = %s,
+                        Branch = %s,
+                        UpdatedAt = CURRENT_TIMESTAMP
+                    WHERE VendorID = %s
+                """
+                cursor.execute(update_query, (bank_name, account_number, account_holder_Name, ifsc_code, branch, vendor_id))
+            else:
+                # Insert new bank record with organization_id from Vendors table
+                insert_query = """
+                    INSERT INTO Banks (OrganizationID, VendorID, BankName, AccountNumber, AccountHolderName, IFSCCode, Branch)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+                cursor.execute(insert_query, (organization_id, vendor_id, bank_name, account_number, account_holder_Name, ifsc_code, branch))
+
+            conn.commit()
+            return JsonResponse({'status': 200, 'message': 'Bank details updated successfully'})
+        except Exception as e:
+            print("Error:", str(e))
+            return JsonResponse({'status': 500, 'message': 'Internal server error while updating bank details'})
+        finally:
+            cursor.close()
+            conn.close()

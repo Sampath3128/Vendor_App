@@ -48,7 +48,6 @@ export class BasicDetailsComponent implements OnInit {
           email: data.EMAIL,
           mobileNumber: data.MOBILENUMBER,
           userName: data.USERNAME,
-          password: data.PASSWORDHASH,
           status: data.STATUS
         });
         this.saveOriginalValues();
@@ -67,13 +66,13 @@ export class BasicDetailsComponent implements OnInit {
 
   enableEditMode() {
     this.isEditMode = true;
-    this.basicDetailsForm.enable();  // Enable all form fields
+    this.basicDetailsForm.enable();
   }
   
   cancelEdit() {
-    this.basicDetailsForm.setValue(this.originalFormValues); // Reset values to original state
+    this.basicDetailsForm.setValue(this.originalFormValues);
     this.isEditMode = false;
-    this.basicDetailsForm.disable(); // Disable all form fields
+    this.basicDetailsForm.disable();
   }
 
   onSubmit(): void {
@@ -86,7 +85,6 @@ export class BasicDetailsComponent implements OnInit {
         email: this.basicDetailsForm.value.email,
         mobileNumber: this.basicDetailsForm.value.mobileNumber,
         username: this.basicDetailsForm.value.userName,
-        password: this.basicDetailsForm.value.password,
         status: this.basicDetailsForm.value.status
       };
   

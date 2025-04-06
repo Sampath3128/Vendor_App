@@ -177,3 +177,55 @@ def get_vendor_info(request, vendor_id):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from datetime import datetime
+
+@csrf_exempt
+def update_vendor(request, vendor_id):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            conn = get_snowflake_connection()
+            cursor = conn.cursor()
+
+            update_query = """
+                UPDATE VENDORS
+                SET VENDORNAME = %s,
+                    VENDORADDRESS = %s,
+                    EMAIL = %s,
+                    MOBILENUMBER = %s,
+                    USERNAME = %s,
+                    PASSWORDHASH = %s,
+                    UPDATEDAT = %s
+                WHERE VENDORID = %s
+            """
+
+            now = datetime.utcnow()
+            hashed_password = hash_password(data.get('password'))
+
+            values = (
+                data.get('vendorName'),
+                data.get('vendorAddress'),
+                data.get('email'),
+                data.get('mobileNumber'),
+                data.get('username'),
+                hashed_password,
+                now,
+                int(vendor_id)
+            )
+
+            cursor.execute(update_query, values)
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            return JsonResponse({'message': 'Vendor updated successfully', 'status': 200}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e), 'status': 201}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method', 'status': 201}, status=405)
+

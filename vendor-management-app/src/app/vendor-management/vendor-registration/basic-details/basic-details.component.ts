@@ -25,7 +25,6 @@ export class BasicDetailsComponent implements OnInit {
       email: [{ value: '', disabled: true }, Validators.required],
       mobileNumber: [{ value: '', disabled: true }, Validators.required],
       userName: [{ value: '', disabled: true }, Validators.required],
-      password: [{ value: '', disabled: true }, Validators.required],
       status: [{ value: 'Pending', disabled: true }]  // Dropdown initially disabled
     });
     

@@ -1,0 +1,44 @@
+# ====================
+# Angular (vendor-management-app)
+# ====================
+vendor-management-app/node_modules/
+vendor-management-app/dist/
+vendor-management-app/.angular/cache/
+vendor-management-app/.angular/config.json
+vendor-management-app/.env
+vendor-management-app/coverage/
+vendor-management-app/package-lock.json
+vendor-management-app/npm-debug.log*
+vendor-management-app/yarn-debug.log*
+vendor-management-app/yarn-error.log*
+vendor-management-app/*.tgz
+
+# ====================
+# Python (vendor_project)
+# ====================
+vendor_project/_pycache_/
+vendor_project/env/
+vendor_project/venv/
+vendor_project/.venv/
+vendor_project/*.py[cod]
+vendor_project/.pytest_cache/
+vendor_project/.mypy_cache/
+vendor_project/.pylint.d/
+vendor_project/.ipynb_checkpoints/
+vendor_project/*.log
+vendor_project/*.sqlite3
+vendor_project/.coverage
+vendor_project/coverage.xml
+vendor_project/.hypothesis/
+vendor_project/build/
+vendor_project/dist/
+vendor_project/*.egg-info/
+
+# ====================
+# IDEs and OS Files (anywhere)
+# ====================
+*.log
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

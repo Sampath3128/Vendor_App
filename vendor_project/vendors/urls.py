@@ -1,6 +1,4 @@
 from django.urls import path
-from pkg_resources.extern import names
-
 from . import views
 
 urlpatterns = [
@@ -15,4 +13,5 @@ urlpatterns = [
     path('bank-details/<int:vendor_id>/', views.get_bank_details, name='get_bank_details'),
     path('update-bank-details/<int:vendor_id>/', views.update_bank_details, name='update_bank_details'),
     path('vendor-msp-details/<int:vendor_id>/', views.get_vendor_msp_details, name='get_bank_details'),
+    path('vendor_info_msp_update/<int:vendor_id>/',views.update_msp_details,name='update_msp_details'),
 ]

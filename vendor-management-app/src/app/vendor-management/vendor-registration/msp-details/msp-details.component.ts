@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { BankDetailsService } from '../bank-details/bank-details.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-msp-details',
@@ -12,8 +13,9 @@ export class MspDetailsComponent implements OnInit {
   mspDetailsForm!: FormGroup;
   vendorID: number = 0;
   originalFormValues: any;
+  isEditMode:boolean=false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private bankDetailsService: BankDetailsService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private bankDetailsService: BankDetailsService, private http:HttpClient) {}
 
   ngOnInit(): void {
 
@@ -25,8 +27,7 @@ export class MspDetailsComponent implements OnInit {
     this.mspDetailsForm = this.fb.group({
       mspId: [{value: '', disabled: true}],
       mspName: [{value: '', disabled: true}, Validators.required],
-      contactemail: [{value: '', disabled: true}, Validators.required],
-      mspContactEmail: [{value: '', disabled: true}, [Validators.required, Validators.email]],
+      contactemail: [{value: '', disabled: true}, [Validators.required,Validators.email]],
       mspContactMobileNo: [{value: '', disabled: true}, [Validators.required, Validators.pattern('[0-9]{10}')]],
       status: [{value: '', disabled: true}, Validators.required]
     });
@@ -50,11 +51,30 @@ export class MspDetailsComponent implements OnInit {
   saveOriginalValues() {
     this.originalFormValues = { ...this.mspDetailsForm.value };
   }
-
   onSubmit(): void {
     if (this.mspDetailsForm.valid) {
-      console.log('MSP Details:', this.mspDetailsForm.value);
-      // Call API service here to save data
+      const apiUrl = `http://127.0.0.1:8000/vendor_info_update/${this.vendorID}/`;
+      
+      const payload = {
+        mspName: this.mspDetailsForm.value.mspName,
+        mspId: this.mspDetailsForm.value.mspId,
+        contactemail: this.mspDetailsForm.value.contactemail,
+        mobileNumber: this.mspDetailsForm.value.mspContactMobileNo,
+        status: this.mspDetailsForm.value.status,
+        
+      };
+  
+      this.http.put(apiUrl, payload).subscribe({
+        next: (response) => {
+          console.log('Vendor updated successfully:', response);
+          this.isEditMode = false;
+          this.mspDetailsForm.disable();
+          this.saveOriginalValues();
+        },
+        error: (error) => {
+          console.error('Error updating vendor:', error);
+        }
+      });
     }
   }
 }

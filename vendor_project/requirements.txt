@@ -1,0 +1,5 @@
+django
+snowflake-connector-python
+django-cors-headers
+bcrypt
+setuptools

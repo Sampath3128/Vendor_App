@@ -346,3 +346,59 @@ def get_vendor_msp_details(request, vendor_id):
     finally:
         cursor.close()
         conn.close()
+
+
+@csrf_exempt
+def update_msp_details(request, vendor_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        msp_name = data.get('mspName')
+        contact_email = data.get('contactemail')
+        mobile_number = data.get('mobileNumber')
+        
+        
+
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+        try:
+            # Check if vendor exists and get organization_id
+            cursor.execute("SELECT OrganizationID FROM Vendors WHERE VendorID = %s", (vendor_id,))
+            vendor_row = cursor.fetchone()
+            if not vendor_row:
+                return JsonResponse({'status': 404, 'message': 'Vendor not found'})
+
+            organization_id = vendor_row[0]
+
+            # Check if msp record exists for the vendor
+            cursor.execute("SELECT COUNT(*) FROM MSPs WHERE VendorID = %s", (vendor_id,))
+            exists = cursor.fetchone()[0] > 0
+    
+
+            if exists:
+                # Update existing bank record
+                update_query = """
+                    UPDATE MSPs
+                    SET MSPName = %s,
+                        ContactEmail = %s,
+                        ContactPhone = %s,
+                        UpdatedAt = CURRENT_TIMESTAMP
+                    WHERE VendorID = %s
+                """
+                cursor.execute(update_query, (msp_name, contact_email,mobile_number, vendor_id))
+            else:
+                # Insert new bank record with organization_id from Vendors table
+                insert_query = """
+                    INSERT INTO MSPs (OrganizationID, MSPName, ContactEmail, ContactPhone, CreatedAt, UpdatedAt, VendorID)
+                    VALUES (%s, %s, %s, %s, current_timestamp, current_timestamp, %s)
+                """
+                cursor.execute(insert_query, (organization_id,msp_name,contact_email,mobile_number, vendor_id))
+
+            conn.commit()
+            return JsonResponse({'status': 200, 'message': 'MSP details updated successfully'})
+        except Exception as e:
+            print("Error:", str(e))
+            return JsonResponse({'status': 500, 'message': 'Internal server error while updating MSP details'})
+        finally:
+            cursor.close()
+            conn.close()
+

@@ -16,4 +16,8 @@ export class BankDetailsService {
     const url = `${this.baseUrl}/update-bank-details/${vendorId}/`;
     return this.http.post(url, formData);
   }
+
+  getMspDetails(vendorId: number) {
+    return this.http.get(`${this.baseUrl}/vendor-msp-details/${vendorId}`);
+  }
 }

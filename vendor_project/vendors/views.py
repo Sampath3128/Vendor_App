@@ -1,5 +1,6 @@
 from linecache import cache
 
+from OpenSSL.rand import status
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -312,3 +313,36 @@ def update_bank_details(request, vendor_id):
         finally:
             cursor.close()
             conn.close()
+
+@csrf_exempt
+def get_vendor_msp_details(request, vendor_id):
+    conn = get_snowflake_connection()
+    cursor = conn.cursor()
+    try:
+        if request.method == 'GET':
+            query = f"""
+                select mspid, mspname, contactemail, contactphone, status from MSPs where vendorid = %s
+            """
+            cursor.execute(query, (vendor_id,))
+            row = cursor.fetchone()
+
+            if row:
+                response = {
+                    'status': 200,
+                    'mspid': row[0],
+                    'mspname': row[1],
+                    'contactemail': row[2],
+                    'contactphone': row[3],
+                    'mspstatus': row[4]
+                }
+
+                return JsonResponse(response, status=200)
+            else:
+                return JsonResponse({'message': "No MSP details found", 'status': 200}, status=200)
+        else:
+            return JsonResponse({'message': 'failure. Method not supported', 'status': 400}, status=200)
+    except Exception as e:
+        return JsonResponse({'message': 'Internal error occurred', 'status': 201}, status=400)
+    finally:
+        cursor.close()
+        conn.close()

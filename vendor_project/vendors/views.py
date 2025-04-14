@@ -350,7 +350,7 @@ def get_vendor_msp_details(request, vendor_id):
 
 @csrf_exempt
 def update_msp_details(request, vendor_id):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         data = json.loads(request.body)
         msp_name = data.get('mspName')
         contact_email = data.get('contactemail')
@@ -396,6 +396,7 @@ def update_msp_details(request, vendor_id):
             conn.commit()
             return JsonResponse({'status': 200, 'message': 'MSP details updated successfully'})
         except Exception as e:
+            print(e)
             print("Error:", str(e))
             return JsonResponse({'status': 500, 'message': 'Internal server error while updating MSP details'})
         finally:

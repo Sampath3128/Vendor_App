@@ -9,14 +9,12 @@ import { VerifyOtpComponent } from './auth/verify-otp/verify-otp.component';
 
 // Dashboard Components
 import { OrgDashboardComponent } from './dashboard/org-dashboard/org-dashboard.component';
-import { ManagerDashboardComponent } from './dashboard/manager-dashboard/manager-dashboard.component';
 import { VendorDashboardComponent } from './dashboard/vendor-dashboard/vendor-dashboard.component';
 
 // Vendor Management Components
 import { VendorListComponent } from './vendor-management/vendor-list/vendor-list.component';
 import { VendorDetailsComponent } from './vendor-management/vendor-details/vendor-details.component';
 import { VendorStatusUpdateComponent } from './vendor-management/vendor-status-update/vendor-status-update.component';
-import { VendorEditComponent } from './vendor-management/vendor-edit/vendor-edit.component';
 
 // Bank Components
 import { ValidateBankComponent } from './bank/validate-bank/validate-bank.component';
@@ -28,10 +26,6 @@ import { DocListComponent } from './compliance/doc-list/doc-list.component';
 // Role Management Component
 import { RoleDropdownComponent } from './role-management/role-dropdown/role-dropdown.component';
 
-// Shared Components
-import { HeaderComponent } from './shared/header/header.component';
-import { FooterComponent } from './shared/footer/footer.component';
-import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
 import { BasicDetailsComponent } from './vendor-management/vendor-registration/basic-details/basic-details.component';
 import { MspDetailsComponent } from './vendor-management/vendor-registration/msp-details/msp-details.component';
@@ -50,14 +44,12 @@ const routes: Routes = [
 
   // Dashboard Routes
   { path: 'org-dashboard', component: OrgDashboardComponent },
-  { path: 'manager-dashboard', component: ManagerDashboardComponent },
   { path: 'vendor-dashboard', component: VendorDashboardComponent },
 
   // Vendor Management Routes
   { path: 'vendor-list', component: VendorListComponent },
   { path: 'vendor-details', component: VendorDetailsComponent },
   { path: 'vendor-status-update', component: VendorStatusUpdateComponent },
-  { path: 'vendor-edit', component: VendorEditComponent },
   { path: 'vendor-edit-basic-details', component: BasicDetailsComponent },
   { path: 'vendor-edit-bank-details', component: BankDetailsComponent },
   { path: 'vendor-edit-msp-details', component: MspDetailsComponent },
@@ -72,11 +64,6 @@ const routes: Routes = [
 
   // Role Management
   { path: 'role-dropdown', component: RoleDropdownComponent },
-
-  // Shared Components (If needed as standalone pages)
-  { path: 'header', component: HeaderComponent },
-  { path: 'footer', component: FooterComponent },
-  { path: 'sidebar', component: SidebarComponent },
 
   // 404 Page (Catch-all Route)
   { path: '**', component: NotFoundComponent }

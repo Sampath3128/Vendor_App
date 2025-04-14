@@ -66,7 +66,7 @@ export class MspDetailsComponent implements OnInit {
   }
   onSubmit(): void {
     if (this.mspDetailsForm.valid) {
-      const apiUrl = `http://127.0.0.1:8000/vendor_info_msp_update/${this.vendorID}/`;
+      const apiUrl = `http://127.0.0.1:8000/vendor_info_msp_update_request/${this.vendorID}/`;
       
       const payload = {
         mspName: this.mspDetailsForm.value.mspName,

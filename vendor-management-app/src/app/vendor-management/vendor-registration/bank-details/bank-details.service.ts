@@ -13,7 +13,7 @@ export class BankDetailsService {
   }
 
   updateBankDetails(vendorId: number, formData: any): Observable<any> {
-    const url = `${this.baseUrl}/update-bank-details/${vendorId}/`;
+    const url = `${this.baseUrl}/update-bank-details-request/${vendorId}/`;
     return this.http.post(url, formData);
   }
 

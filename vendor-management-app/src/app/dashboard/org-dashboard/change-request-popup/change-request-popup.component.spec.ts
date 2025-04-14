@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SidebarComponent } from './sidebar.component';
+import { ChangeRequestPopupComponent } from './change-request-popup.component';
 
-describe('SidebarComponent', () => {
-  let component: SidebarComponent;
-  let fixture: ComponentFixture<SidebarComponent>;
+describe('ChangeRequestPopupComponent', () => {
+  let component: ChangeRequestPopupComponent;
+  let fixture: ComponentFixture<ChangeRequestPopupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SidebarComponent ]
+      declarations: [ ChangeRequestPopupComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SidebarComponent);
+    fixture = TestBed.createComponent(ChangeRequestPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

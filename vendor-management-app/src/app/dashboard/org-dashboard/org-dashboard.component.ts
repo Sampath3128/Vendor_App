@@ -1,71 +1,82 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-org-dashboard',
   templateUrl: './org-dashboard.component.html',
   styleUrls: ['./org-dashboard.component.css']
 })
-export class OrgDashboardComponent {
-  vendors = [
-    { id: 1, name: 'ABC Suppliers', status: 'Pending', verifier: 'OrgAdmin' },
-    { id: 2, name: 'XYZ Services', status: 'Verified', verifier: 'OrgAdmin' },
-    { id: 3, name: 'LMN Traders', status: 'Rejected', verifier: 'Manager' }
-  ];
+export class OrgDashboardComponent implements OnInit {
+  vendors: any[] = [];
+  showModal: boolean = false;
+  requestDetails: any = null;
 
-  vendorData: any = {};
-
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.http.get<any>('http://127.0.0.1:8000/all_vendors/')
-      .subscribe({
-        next: (data) => {
-          this.vendorData = data;
-          console.log("vendorData: ");
-          console.log(this.vendorData);
-        },
-        error: (error) => {
-          console.error('Error fetching vendor data:', error);
-        }
-      });
+    this.fetchChangeRequests();
   }
 
-  viewVendor(vendorId: number) {
-    this.router.navigate(['/vendor-dashboard']);
+  // Fetch all change requests (bank, basic, msp)
+  fetchChangeRequests(): void {
+    this.http.get<any>(`http://127.0.0.1:8000/change-requests`).subscribe(
+      data => {
+        this.vendors = data.changeRequests;
+      },
+      error => {
+        console.error('Error fetching change requests', error);
+      }
+    );
   }
 
-  verifyVendor(vendorId: number) {
-    console.log('Verifying Vendor ID:', vendorId);
-    this.updateVendorStatus(vendorId, 'Verified');
+  // Open the modal and display change request details
+  viewVendorDetails(requestId: string): void {
+    // const request = this.vendors.find(v => v.requestId === requestId);
+    // if (request) {
+    //   this.requestDetails = request;
+    //   this.showModal = true;
+    // }
+    
+    this.showModal = true;
   }
 
-  rejectVendor(vendorId: number) {
-    console.log('Rejecting Vendor ID:', vendorId);
-    this.updateVendorStatus(vendorId, 'Rejected');
+  // Approve change request
+  approveRequest(requestId: string): void {
+    this.updateRequestStatus(requestId, 'approve');
   }
 
-  updateVerifier(vendorId: number) {
-    console.log('Updating Verifier for Vendor ID:', vendorId);
-    const vendor = this.vendors.find(v => v.id === vendorId);
-    if (vendor) {
-      vendor.verifier = 'UpdatedVerifier';
+  // Reject change request
+  rejectRequest(requestId: string): void {
+    this.updateRequestStatus(requestId, 'reject');
+  }
+
+  // Update request status (approve/reject)
+  updateRequestStatus(requestId: string, action: string): void {
+    this.http.put<any>(`http://127.0.0.1:8000/change-request-status/${requestId}/${action}`, {}).subscribe(
+      data => {
+        this.fetchChangeRequests();  // Refresh the requests after update
+        this.closeModal();
+      },
+      error => {
+        console.error('Error updating request status', error);
+      }
+    );
+  }
+
+  // Close the modal
+  closeModal(): void {
+    this.showModal = false;
+    this.requestDetails = null;
+  }
+
+  // Get status class for styling
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Pending': return 'pending';
+      case 'Approved': return 'approved';
+      case 'Rejected': return 'rejected';
+      default: return '';
     }
-  }
-
-  updateVendorStatus(vendorId: number, status: string) {
-    const vendor = this.vendors.find(v => v.id === vendorId);
-    if (vendor) {
-      vendor.status = status;
-    }
-  }
-
-  getStatusClass(status: string) {
-    return {
-      'status-pending': status === 'Pending',
-      'status-verified': status === 'Verified',
-      'status-rejected': status === 'Rejected'
-    };
   }
 }

@@ -76,7 +76,7 @@ export class BasicDetailsComponent implements OnInit {
 
   onSubmit(): void {
     if (this.basicDetailsForm.valid) {
-      const apiUrl = `http://127.0.0.1:8000/vendor_info_update/${this.vendorID}/`;
+      const apiUrl = `http://127.0.0.1:8000/vendor_info_update_request/${this.vendorID}/`;
       
       const payload = {
         vendorName: this.basicDetailsForm.value.vendorName,
@@ -92,7 +92,7 @@ export class BasicDetailsComponent implements OnInit {
           console.log('Vendor updated successfully:', response);
           this.isEditMode = false;
           this.basicDetailsForm.disable();
-          this.saveOriginalValues();
+          this.ngOnInit();
         },
         error: (error) => {
           console.error('Error updating vendor:', error);

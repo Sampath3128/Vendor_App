@@ -186,6 +186,59 @@ import json
 from datetime import datetime
 
 @csrf_exempt
+def create_vendor_change_request(request, vendor_id):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            conn = get_snowflake_connection()
+            cursor = conn.cursor()
+
+            now = datetime.utcnow()
+
+            insert_query = """
+                INSERT INTO VendorChangeRequests (
+                    VendorID,
+                    VendorName,
+                    VendorAddress,
+                    Email,
+                    MobileNumber,
+                    Username,
+                    Status,
+                    RequestStatus,
+                    CreatedAt,
+                    RequestedBy
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pending', %s, %s)
+            """
+
+            # Example: assume the logged-in user ID is passed via headers or session
+            requested_by = vendor_id
+
+            values = (
+                int(vendor_id),
+                data.get('vendorName'),
+                data.get('vendorAddress'),
+                data.get('email'),
+                data.get('mobileNumber'),
+                data.get('username'),
+                data.get('status', 'Active'),  # Optional field
+                now,
+                int(requested_by)
+            )
+
+            cursor.execute(insert_query, values)
+            conn.commit()
+
+            cursor.close()
+            conn.close()
+
+            return JsonResponse({'message': 'Change request submitted to admin', 'status': 200}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e), 'status': 500}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method', 'status': 405}, status=405)
+
+@csrf_exempt
 def update_vendor(request, vendor_id):
     if request.method == 'PUT':
         try:
@@ -258,6 +311,93 @@ def get_bank_details(request, vendor_id):
         finally:
             cursor.close()
             conn.close()
+
+
+@csrf_exempt
+def create_bank_change_request(request, vendor_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        bank_name = data.get('bankName')
+        account_number = data.get('accountNumber')
+        account_holder_name = data.get('accountHolderName')
+        ifsc_code = data.get('ifsccode')
+        branch = data.get('branchName')
+
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+        try:
+            # Check if vendor exists and get organization_id
+            cursor.execute("SELECT OrganizationID FROM Vendors WHERE VendorID = %s", (vendor_id,))
+            vendor_row = cursor.fetchone()
+            if not vendor_row:
+                return JsonResponse({'status': 404, 'message': 'Vendor not found'})
+
+            organization_id = vendor_row[0]
+
+            # Get the current user making the change
+            requested_by = vendor_id
+
+            # Check if a bank record exists for the vendor
+            cursor.execute("SELECT COUNT(*) FROM Banks WHERE VendorID = %s", (vendor_id,))
+            exists = cursor.fetchone()[0] > 0
+
+            # If the bank record exists, prepare to submit a change request
+            if exists:
+                insert_query = """
+                    INSERT INTO BankChangeRequests (
+                        VendorID,
+                        OrganizationID,
+                        BankName,
+                        AccountNumber,
+                        AccountHolderName,
+                        IFSCCode,
+                        Branch,
+                        RequestStatus,
+                        RequestedBy,
+                        CreatedAt
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pending', %s, CURRENT_TIMESTAMP)
+                """
+            else:
+                # If no bank record exists, create a new change request
+                insert_query = """
+                    INSERT INTO BankChangeRequests (
+                        VendorID,
+                        OrganizationID,
+                        BankName,
+                        AccountNumber,
+                        AccountHolderName,
+                        IFSCCode,
+                        Branch,
+                        RequestStatus,
+                        RequestedBy,
+                        CreatedAt
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pending', %s, CURRENT_TIMESTAMP)
+                """
+
+            # Insert the change request
+            cursor.execute(insert_query, (
+                vendor_id,
+                organization_id,
+                bank_name,
+                account_number,
+                account_holder_name,
+                ifsc_code,
+                branch,
+                requested_by
+            ))
+
+            conn.commit()
+            return JsonResponse({'status': 200, 'message': 'Bank change request submitted successfully'})
+        except Exception as e:
+            print("Error:", str(e))
+            return JsonResponse({'status': 500, 'message': 'Internal server error while creating bank change request'})
+        finally:
+            cursor.close()
+            conn.close()
+
+
 
 @csrf_exempt
 def update_bank_details(request, vendor_id):
@@ -349,6 +489,60 @@ def get_vendor_msp_details(request, vendor_id):
 
 
 @csrf_exempt
+def create_msp_change_request(request, vendor_id):
+    if request.method == 'PUT':
+
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+
+        try:
+            data = json.loads(request.body)
+            msp_name = data.get('mspName')
+            contact_email = data.get('contactemail')
+            mobile_number = data.get('mobileNumber')
+
+            # Get organization ID from vendor
+            cursor.execute("SELECT OrganizationID FROM Vendors WHERE VendorID = %s", (vendor_id,))
+            vendor_row = cursor.fetchone()
+            if not vendor_row:
+                return JsonResponse({'status': 404, 'message': 'Vendor not found'})
+
+            organization_id = vendor_row[0]
+            requested_by = vendor_id
+
+            insert_query = """
+                INSERT INTO MSPChangeRequests (
+                    VendorID,
+                    OrganizationID,
+                    MSPName,
+                    ContactEmail,
+                    ContactPhone,
+                    RequestStatus,
+                    CreatedAt,
+                    RequestedBy
+                )
+                VALUES (%s, %s, %s, %s, %s, 'Pending', CURRENT_TIMESTAMP, %s)
+            """
+            cursor.execute(insert_query, (
+                vendor_id,
+                organization_id,
+                msp_name,
+                contact_email,
+                mobile_number,
+                requested_by
+            ))
+
+            conn.commit()
+            return JsonResponse({'status': 200, 'message': 'MSP change request submitted for approval'})
+        except Exception as e:
+            print("Error:", str(e))
+            return JsonResponse({'status': 500, 'message': 'Internal server error while creating MSP change request'})
+        finally:
+            cursor.close()
+            conn.close()
+
+
+@csrf_exempt
 def update_msp_details(request, vendor_id):
     if request.method == 'PUT':
         data = json.loads(request.body)
@@ -403,3 +597,108 @@ def update_msp_details(request, vendor_id):
             cursor.close()
             conn.close()
 
+@csrf_exempt
+def get_all_vendor_change_requests(request):
+    if request.method == 'GET':
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+        try:
+            # SQL query to fetch vendor change requests from all tables (Bank, Basic, MSP)
+            query = """
+                SELECT 
+                    'Basic' AS request_type,
+                    vcr.VendorID AS vendor_id,
+                    vcr.VendorName AS vendor_name
+                FROM 
+                    VendorChangeRequests vcr
+                JOIN 
+                    Vendors v ON v.VendorID = vcr.VendorID
+                WHERE 
+                    vcr.RequestStatus = 'Pending'
+
+                UNION ALL
+
+                SELECT 
+                    'Bank' AS request_type,
+                    vcq.VendorID AS vendor_id,
+                    vcr.VendorName AS vendor_name
+                FROM 
+                    BankChangeRequests vcq
+                JOIN 
+                    Banks b ON b.BankID = vcq.BankID
+                JOIN 
+                    Vendors vcr ON vcr.VendorID = vcq.VendorID
+                WHERE 
+                    vcq.RequestStatus = 'Pending'
+                    
+                UNION ALL
+                
+                SELECT 
+                    'MSP' AS request_type,
+                    vcr.VendorID AS vendor_id,
+                    vcr.VendorName AS vendor_name
+                FROM 
+                    MSPChangeRequests mcr
+                JOIN 
+                    MSPs m ON m.MSPID = mcr.MSPID
+                JOIN 
+                    Vendors vcr ON vcr.VendorID = m.VendorID
+                WHERE 
+                    mcr.RequestStatus = 'Pending'
+            """
+
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            # Format the rows into a response
+            change_requests = []
+            for row in rows:
+                change_requests.append({
+                    'requestType': row[0],
+                    'vendorId': row[1],
+                    'vendorName': row[2],
+                    'status': 'pending'
+                })
+
+            return JsonResponse({'status': 200, 'changeRequests': change_requests})
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({'status': 500, 'message': 'Internal Server Error'})
+        finally:
+            cursor.close()
+            conn.close()
+
+
+@csrf_exempt
+def update_change_request_status(request, request_id, action):
+    if request.method == 'PUT':
+        conn = get_snowflake_connection()
+        cursor = conn.cursor()
+        try:
+
+            # Determine the status based on action
+            if action == 'approve':
+                new_status = 'Approved'
+            elif action == 'reject':
+                new_status = 'Rejected'
+            else:
+                return JsonResponse({'status': 400, 'message': 'Invalid action'})
+
+            # Update the status of the change request based on its ID
+            update_query = """
+                UPDATE ChangeRequests
+                SET RequestStatus = %s
+                WHERE RequestID = %s
+            """
+            cursor.execute(update_query, (new_status, request_id))
+
+            conn.commit()
+            return JsonResponse({'status': 200, 'message': f'Change request {action}d successfully'})
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({'status': 500, 'message': 'Internal Server Error'})
+        finally:
+            cursor.close()
+            conn.close()

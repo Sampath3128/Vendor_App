@@ -1,34 +1,37 @@
 <div class="dashboard-container">
-    <!-- Main Content -->
-    <div class="dashboard-content">
-      <h2>Organization Dashboard</h2>
-  
-      <div class="vendor-list">
-        <h3>Registered Vendors</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Vendor Name</th>
-              <th>Status</th>
-              <th>Verifier</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let vendor of vendors">
-              <td>{{ vendor.name }}</td>
-              <td [ngClass]="getStatusClass(vendor.status)">{{ vendor.status }}</td>
-              <td>{{ vendor.verifier }}</td>
-              <td>
-                <button (click)="viewVendor(vendor.id)">View</button>
-                <button *ngIf="vendor.status === 'Pending'" (click)="verifyVendor(vendor.id)">Verify</button>
-                <button *ngIf="vendor.status === 'Pending'" (click)="rejectVendor(vendor.id)">Reject</button>
-                <button (click)="updateVerifier(vendor.id)">Update Verifier</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="dashboard-content">
+    <h2 class="dashboard-title">Organization Dashboard</h2>
+
+    <div class="vendor-list">
+      <h3 class="section-title">Pending Change Requests</h3>
+      
+      <table class="vendor-table">
+        <thead>
+          <tr>
+            <th class="table-header">Request Type</th>
+            <th class="table-header">Requested By</th>
+            <th class="table-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of vendors">
+            <td>{{ request.requestType }}</td>
+            <td>{{ request.vendorName }}</td>
+            <td class="actions">
+              <button class="btn-view" (click)="viewVendorDetails(request.vendorId)">View</button>
+              <button *ngIf="request.status === 'pending'" class="btn-approve" (click)="approveRequest(request.requestId)">Approve</button>
+              <button *ngIf="request.status === 'pending'" class="btn-reject" (click)="rejectRequest(request.requestId)">Reject</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <!-- Change Request Popup Modal -->
+    <app-change-request-popup 
+      [showModal]="showModal" 
+      [requestDetails]="requestDetails" 
+      (closeModal)="closeModal()">
+    </app-change-request-popup>
   </div>
-  
+</div>

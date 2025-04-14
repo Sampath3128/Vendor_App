@@ -1,0 +1,30 @@
+<div class="modal" *ngIf="showModal">
+    <!-- Modal Overlay to close when clicked -->
+    <div class="modal-overlay" (click)="close()"></div>
+    
+    <!-- Modal Content -->
+    <div class="modal-content">
+      <h3 class="modal-title">Change Request Details</h3>
+      
+      <table class="modal-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Original Value</th>
+            <th>New Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let field of ['originalValue', 'newValue']">
+            <td>{{ field }}</td>
+            <td>{{ requestDetails?.originalValue }}</td>
+            <td>{{ requestDetails?.newValue }}</td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <div class="modal-actions">
+        <button class="btn-close" (click)="close()">Close</button>
+      </div>
+    </div>
+</div>

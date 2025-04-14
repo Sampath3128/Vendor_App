@@ -48,6 +48,19 @@ export class MspDetailsComponent implements OnInit {
     })
   }
 
+  enableEditMode() {
+    this.isEditMode = true;
+    this.mspDetailsForm.enable();
+  }
+
+  cancelEdit() {
+    if (this.originalFormValues) {
+      this.mspDetailsForm.setValue(this.originalFormValues);
+    }
+    this.isEditMode = false;
+    this.mspDetailsForm.disable();
+  }
+
   saveOriginalValues() {
     this.originalFormValues = { ...this.mspDetailsForm.value };
   }

@@ -1,11 +1,9 @@
 <div class="modal" *ngIf="showModal">
-    <!-- Modal Overlay to close when clicked -->
     <div class="modal-overlay" (click)="close()"></div>
-    
-    <!-- Modal Content -->
-    <div class="modal-content">
+  
+    <div class="modal-box">
       <h3 class="modal-title">Change Request Details</h3>
-      
+  
       <table class="modal-table">
         <thead>
           <tr>
@@ -15,10 +13,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let field of ['originalValue', 'newValue']">
-            <td>{{ field }}</td>
-            <td>{{ requestDetails?.originalValue }}</td>
-            <td>{{ requestDetails?.newValue }}</td>
+          <tr *ngFor="let row of requestComparisonData">
+            <td>{{ row.field }}</td>
+            <td>{{ row.original }}</td>
+            <td>{{ row.new }}</td>
           </tr>
         </tbody>
       </table>
@@ -27,4 +25,5 @@
         <button class="btn-close" (click)="close()">Close</button>
       </div>
     </div>
-</div>
+  </div>
+  

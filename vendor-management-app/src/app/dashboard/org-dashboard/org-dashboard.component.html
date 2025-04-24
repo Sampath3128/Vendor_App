@@ -18,7 +18,7 @@
             <td>{{ request.requestType }}</td>
             <td>{{ request.vendorName }}</td>
             <td class="actions">
-              <button class="btn-view" (click)="viewVendorDetails(request.vendorId)">View</button>
+              <button class="btn-view" (click)="viewVendorDetails(request.requestType, request.vendorId)">View</button>
               <button *ngIf="request.status === 'pending'" class="btn-approve" (click)="approveRequest(request.requestId)">Approve</button>
               <button *ngIf="request.status === 'pending'" class="btn-reject" (click)="rejectRequest(request.requestId)">Reject</button>
             </td>
@@ -30,7 +30,7 @@
     <!-- Change Request Popup Modal -->
     <app-change-request-popup 
       [showModal]="showModal" 
-      [requestDetails]="requestDetails" 
+      [requestComparisonData]="requestComparisonData" 
       (closeModal)="closeModal()">
     </app-change-request-popup>
   </div>

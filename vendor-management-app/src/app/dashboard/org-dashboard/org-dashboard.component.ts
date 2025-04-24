@@ -10,7 +10,10 @@ import { environment } from 'src/environments/environment';
 export class OrgDashboardComponent implements OnInit {
   vendors: any[] = [];
   showModal: boolean = false;
-  requestDetails: any = null;
+  
+  requestDetails: any = null; // This will hold the full response
+  requestComparisonData: any[] = []; // This will hold the formatted data for UI
+
 
   constructor(private http: HttpClient) { }
 
@@ -31,14 +34,34 @@ export class OrgDashboardComponent implements OnInit {
   }
 
   // Open the modal and display change request details
-  viewVendorDetails(requestId: string): void {
-    // const request = this.vendors.find(v => v.requestId === requestId);
-    // if (request) {
-    //   this.requestDetails = request;
-    //   this.showModal = true;
-    // }
-    
-    this.showModal = true;
+  viewVendorDetails(requestType: string, vendorid: string): void {
+    const requestBody = {
+      vendor_id: vendorid,
+      request_type: requestType
+    };
+  
+    this.http.post<any>('http://127.0.0.1:8000/change-request-info/', requestBody).subscribe(
+      data => {
+        this.requestDetails = data;
+  
+        // Transform the data into a list of { field, original, new }
+        this.requestComparisonData = Object.keys(data.original_data).map(key => ({
+          field: this.formatFieldName(key),
+          original: data.original_data[key],
+          new: data.request_data[key]
+        }));
+  
+        this.showModal = true;
+      },
+      error => {
+        console.error('Error fetching vendor info:', error);
+      }
+    );
+  }
+
+  formatFieldName(key: string): string {
+    // Optional: convert snake_case to Title Case for display
+    return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   // Approve change request

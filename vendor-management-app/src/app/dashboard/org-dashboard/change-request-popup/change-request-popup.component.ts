@@ -7,7 +7,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class ChangeRequestPopupComponent {
   @Input() showModal: boolean = false;
-  @Input() requestDetails: any;
+  @Input() requestComparisonData: any;
   @Output() closeModal = new EventEmitter<void>();
 
   // Close the modal

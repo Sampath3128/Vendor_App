@@ -74,7 +74,6 @@ export class MspDetailsComponent implements OnInit {
         contactemail: this.mspDetailsForm.value.contactemail,
         mobileNumber: this.mspDetailsForm.value.mspContactMobileNo,
         status: this.mspDetailsForm.value.status,
-        
       };
   
       this.http.put(apiUrl, payload).subscribe({
@@ -82,7 +81,7 @@ export class MspDetailsComponent implements OnInit {
           console.log('Vendor updated successfully:', response);
           this.isEditMode = false;
           this.mspDetailsForm.disable();
-          this.saveOriginalValues();
+          this.ngOnInit();
         },
         error: (error) => {
           console.error('Error updating vendor:', error);

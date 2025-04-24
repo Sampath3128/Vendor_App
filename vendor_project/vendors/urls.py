@@ -18,4 +18,5 @@ urlpatterns = [
     path('vendor_info_msp_update_request/<int:vendor_id>/',views.create_msp_change_request,name='update_msp_details_request'),
     path('vendor_info_msp_update/<int:vendor_id>/',views.update_msp_details,name='update_msp_details'),
     path('change-requests/',views.get_all_vendor_change_requests,name='get_change_requests_by_organization'),
+    path('change-request-info/',views.get_vendor_change_request_info,name='get_change_requests_info_of_user'),
 ]

@@ -500,6 +500,7 @@ def create_msp_change_request(request, vendor_id):
             msp_name = data.get('mspName')
             contact_email = data.get('contactemail')
             mobile_number = data.get('mobileNumber')
+            msp_id = data.get('mspId')
 
             # Get organization ID from vendor
             cursor.execute("SELECT OrganizationID FROM Vendors WHERE VendorID = %s", (vendor_id,))
@@ -513,6 +514,7 @@ def create_msp_change_request(request, vendor_id):
             insert_query = """
                 INSERT INTO MSPChangeRequests (
                     VendorID,
+                    MSPID,
                     OrganizationID,
                     MSPName,
                     ContactEmail,
@@ -521,10 +523,11 @@ def create_msp_change_request(request, vendor_id):
                     CreatedAt,
                     RequestedBy
                 )
-                VALUES (%s, %s, %s, %s, %s, 'Pending', CURRENT_TIMESTAMP, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, 'Pending', CURRENT_TIMESTAMP, %s)
             """
             cursor.execute(insert_query, (
                 vendor_id,
+                msp_id,
                 organization_id,
                 msp_name,
                 contact_email,
@@ -607,8 +610,8 @@ def get_all_vendor_change_requests(request):
             query = """
                 SELECT 
                     'Basic' AS request_type,
-                    vcr.VendorID AS vendor_id,
-                    vcr.VendorName AS vendor_name
+                    v.VendorID AS vendor_id,
+                    v.VendorName AS vendor_name
                 FROM 
                     VendorChangeRequests vcr
                 JOIN 
@@ -625,8 +628,6 @@ def get_all_vendor_change_requests(request):
                 FROM 
                     BankChangeRequests vcq
                 JOIN 
-                    Banks b ON b.BankID = vcq.BankID
-                JOIN 
                     Vendors vcr ON vcr.VendorID = vcq.VendorID
                 WHERE 
                     vcq.RequestStatus = 'Pending'
@@ -635,14 +636,12 @@ def get_all_vendor_change_requests(request):
                 
                 SELECT 
                     'MSP' AS request_type,
-                    vcr.VendorID AS vendor_id,
+                    mcr.VendorID AS vendor_id,
                     vcr.VendorName AS vendor_name
                 FROM 
                     MSPChangeRequests mcr
                 JOIN 
-                    MSPs m ON m.MSPID = mcr.MSPID
-                JOIN 
-                    Vendors vcr ON vcr.VendorID = m.VendorID
+                    Vendors vcr ON mcr.VendorID = vcr.VendorID
                 WHERE 
                     mcr.RequestStatus = 'Pending'
             """
@@ -702,3 +701,143 @@ def update_change_request_status(request, request_id, action):
         finally:
             cursor.close()
             conn.close()
+
+def fetch_basic_data(cursor, vendor_id):
+    request_query = """
+        SELECT 
+            VendorName, VendorAddress, Email, 
+            MobileNumber, Username, Status, CreatedAt
+        FROM VendorChangeRequests 
+        WHERE vendorid = %s AND requeststatus = %s
+        ORDER BY CreatedAt DESC LIMIT 1
+    """
+    vendor_query = """
+        SELECT 
+            VendorName, VendorAddress, Email, 
+            MobileNumber, Username, Status, CreatedAt
+        FROM Vendors 
+        WHERE vendorid = %s
+    """
+
+    cursor.execute(request_query, (vendor_id, 'Pending'))
+    request_row = cursor.fetchone()
+
+    cursor.execute(vendor_query, (vendor_id,))
+    vendor_row = cursor.fetchone()
+
+    return normalize_data(request_row), normalize_data(vendor_row)
+
+
+def fetch_bank_data(cursor, vendor_id):
+    request_query = """
+        SELECT BankName, AccountNumber, IFSCCode, Status, CreatedAt
+        FROM BankChangeRequests 
+        WHERE vendorid = %s AND requeststatus = %s
+        ORDER BY CreatedAt DESC LIMIT 1
+    """
+    vendor_query = """
+        SELECT BankName, AccountNumber, IFSCCode, Status, CreatedAt
+        FROM Banks 
+        WHERE vendorid = %s
+    """
+
+    cursor.execute(request_query, (vendor_id, 'Pending'))
+    request_row = cursor.fetchone()
+
+    cursor.execute(vendor_query, (vendor_id,))
+    vendor_row = cursor.fetchone()
+
+    return normalize_bank_data(request_row), normalize_bank_data(vendor_row)
+
+
+def fetch_msp_data(cursor, vendor_id):
+    request_query = """
+        SELECT MSPName, ContactEmail, ContactPhone, Status, CreatedAt
+        FROM MSPChangeRequests 
+        WHERE vendorid = %s AND requeststatus = %s
+        ORDER BY CreatedAt DESC LIMIT 1
+    """
+    vendor_query = """
+        SELECT MSPName, ContactEmail, ContactPhone, Status, CreatedAt
+        FROM MSPs 
+        WHERE vendorid = %s
+    """
+
+    cursor.execute(request_query, (vendor_id, 'Pending'))
+    request_row = cursor.fetchone()
+
+    cursor.execute(vendor_query, (vendor_id,))
+    vendor_row = cursor.fetchone()
+
+    return normalize_msp_data(request_row), normalize_msp_data(vendor_row)
+
+
+def normalize_data(row):
+    if not row:
+        return None
+    return {
+        "vendor_name": row[0],
+        "vendor_address": row[1],
+        "email": row[2],
+        "mobile_number": row[3],
+        "username": row[4],
+    }
+
+
+def normalize_bank_data(row):
+    if not row:
+        return None
+    return {
+        "bank_name": row[0],
+        "account_number": row[1],
+        "ifsc_code": row[2],
+    }
+
+
+def normalize_msp_data(row):
+    if not row:
+        return None
+    return {
+        "msp_name": row[0],
+        "contact_number": row[2],
+        "email": row[1],
+    }
+
+
+@csrf_exempt
+def get_vendor_change_request_info(request):
+    if request.method != 'POST':
+        return JsonResponse({'status': 400, 'message': 'Only GET method is allowed'}, status=400)
+
+    conn = get_snowflake_connection()
+    cursor = conn.cursor()
+
+    try:
+        data = json.loads(request.body)
+        vendor_id = data.get('vendor_id')
+        request_type = data.get('request_type')
+
+        if not vendor_id or not request_type:
+            return JsonResponse({"status": 400, "message": "Missing vendor_id or request_type"}, status=400)
+
+        if request_type == 'Basic':
+            request_data, original_data = fetch_basic_data(cursor, vendor_id)
+        elif request_type == 'Bank':
+            request_data, original_data = fetch_bank_data(cursor, vendor_id)
+        elif request_type == 'MSP':
+            request_data, original_data = fetch_msp_data(cursor, vendor_id)
+        else:
+            return JsonResponse({"status": 400, "message": "Invalid request_type"}, status=400)
+
+        return JsonResponse({
+            "status": 200,
+            "original_data": original_data,
+            "request_data": request_data
+        }, status=200)
+
+    except Exception as e:
+        return JsonResponse({'status': 500, 'message': str(e)}, status=500)
+
+    finally:
+        cursor.close()
+        conn.close()
